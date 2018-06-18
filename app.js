@@ -27,9 +27,12 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 // Parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.urlencoded({ extended: false }));
 // Parse application/json
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+
+// Set public folder
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Home Route
 app.get('/', (req, res) => {
@@ -44,6 +47,15 @@ app.get('/', (req, res) => {
         }
         
     })  
+});
+
+// Get Single Article
+app.get('/article/:id', (req, res) => {
+    Article.findById(req.params.id, (err, article) => {
+        res.render('article', {
+            article: article
+        });
+    });
 });
 
 // Add Route
@@ -68,6 +80,46 @@ app.post('/articles/add', (req, res) => {
             res.redirect('/');
         }
     })
+});
+
+// Load edit form
+app.get('/article/edit/:id', (req, res) => {
+    Article.findById(req.params.id, (err, article) => {
+        res.render('edit_article', {
+            title: 'Edit',
+            article: article
+        });
+    });
+});
+
+// Update Submit POST Route
+app.post('/articles/edit/:id', (req, res) => {
+    let article = {};
+    article.title = req.body.title;
+    article.author = req.body.author;
+    article.body = req.body.body;
+
+    let query = {_id:req.params.id}
+
+    Article.update(query, article, (err) => {
+        if(err) {
+            console.log(err)
+            return;
+        } else {
+            res.redirect('/');
+        }
+    })
+});
+
+app.delete('/article/:id', (req, res) => {
+    let query = {_id: req.params.id}
+
+    Article.remove(query, (err) => {
+        if (err) {
+            console.log(err);
+        } 
+        res.send('Success');
+    });
 });
 
 // Start Server
