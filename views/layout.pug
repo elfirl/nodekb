@@ -12,11 +12,10 @@ html
       #navbarsExampleDefault.collapse.navbar-collapse
         ul.navbar-nav.mr-auto
           li.nav-item
-            a.nav-link(href='/')
-              | Home 
-              span.sr-only (current)
-          li.nav-item
-            a.nav-link(href='/articles/add') Add Article
+            a.nav-link(href='/') Home 
+          if user
+            li.nav-item
+              a.nav-link(href='/articles/add') Add Article
         ul.nav.navbar-nav.navbar-right
           if user
             li 
